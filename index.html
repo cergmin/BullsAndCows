@@ -1,0 +1,179 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Buuls&Cows</title>
+    <link rel="shortcut icon" href="bull.ico" type="image/x-icon">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+</head>
+<body>
+<h1 class="number">1234</h1>
+<h2 class="message">4536 вариантов</h2>
+<form class="input-row" onsubmit="return sendData()">
+    <div class="input-group">
+        <span class="input-group-addon" id="bulls-addon">Быки</span>
+        <input type="number" onkeyup="inputValidation(this)" placeholder="0" maxlength="1" class="form-control bullsInput" aria-describedby="bulls-addon" autofocus tabindex="1">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon" id="cows-addon">Коровы</span>
+        <input type="number" onkeyup="inputValidation(this)" placeholder="0" maxlength="1" class="form-control cowsInput" aria-describedby="cows-addon" tabindex="2">
+    </div>
+    <br>
+    <button class="btn btn-success" id="submitButton" type="submit" tabindex="-1">Отправить</button>
+</form>
+<script>
+    var nOfTrys = 1;
+    var valueOfTry = "1234";
+    var variants = new Array();
+    var constantVariants = new Array();
+
+    for(let a = 1; a < 10; a++){
+        for(let b = 0; b < 10; b++){
+            for(let c = 0; c < 10; c++){
+                for(let d = 0; d < 10; d++){
+                    if((a != b) &&
+                        (a != c) &&
+                        (a != d) &&
+                        (b != c) &&
+                        (b != d) &&
+                        (c != d)){
+                        constantVariants.push(new Array(a, b, c, d));
+                    }
+                }
+            }
+        }
+    }
+
+    variants = constantVariants;
+
+    $(".number").html(valueOfTry);
+    $(".message").html(variants.length.toString() + " " + getNumEnding(variants.length, new Array("вариант", "варианта", "вариантов")));
+
+    function  sendData() {
+        if(variants.length > 1){
+            var bullsInput = $(".bullsInput").val();
+            var cowsInput = $(".cowsInput").val();
+
+            if(bullsInput == "") bullsInput = "0";
+            if(cowsInput == "") cowsInput = "0";
+
+
+            if((/^[0-4]$/.test(bullsInput)) && (/^[0-4]$/.test(cowsInput)) && ((Number(bullsInput) + Number(cowsInput)) <= 4)){
+                var newVariants = new Array();
+                for(var i = 0; i < variants.length; i++){
+                    var bulls = 0;
+                    var cows = 0;
+
+                    if(variants[i][0].toString() == valueOfTry[0]){
+                        bulls++;
+                    }
+                    else if((variants[i][0].toString() == valueOfTry[0]) || (variants[i][0].toString() == valueOfTry[1]) || (variants[i][0].toString() == valueOfTry[2]) || (variants[i][0].toString() == valueOfTry[3])){
+                        cows++;
+                    }
+
+                    if(variants[i][1].toString() == valueOfTry[1]){
+                        bulls++;
+                    }
+                    else if((variants[i][1].toString() == valueOfTry[0]) || (variants[i][1].toString() == valueOfTry[1]) || (variants[i][1].toString() == valueOfTry[2]) || (variants[i][1].toString() == valueOfTry[3])){
+                        cows++;
+                    }
+
+                    if(variants[i][2].toString() == valueOfTry[2]){
+                        bulls++;
+                    }
+                    else if((variants[i][2].toString() == valueOfTry[0]) || (variants[i][2].toString() == valueOfTry[1]) || (variants[i][2].toString() == valueOfTry[2]) || (variants[i][2].toString() == valueOfTry[3])){
+                        cows++;
+                    }
+
+                    if(variants[i][3].toString() == valueOfTry[3]){
+                        bulls++;
+                    }
+                    else if((variants[i][3].toString() == valueOfTry[0]) || (variants[i][3].toString() == valueOfTry[1]) || (variants[i][3].toString() == valueOfTry[2]) || (variants[i][3].toString() == valueOfTry[3])){
+                        cows++;
+                    }
+
+                    if((bullsInput == bulls.toString()) && (cowsInput == cows.toString())){
+                        newVariants.push(new Array(variants[i][0], variants[i][1], variants[i][2], variants[i][3]));
+                    }
+                }
+                variants = newVariants;
+
+                $(".message").html(variants.length.toString() + " " + getNumEnding(variants.length, new Array("вариант", "варианта", "вариантов")));
+
+
+                nOfTrys++;
+
+                if((nOfTrys == 2) && (variants.length > 6)) valueOfTry = "4567";
+                else if((nOfTrys == 3) && (variants.length > 4)) valueOfTry = "3480";
+                else if((nOfTrys == 4) && (variants.length > 2)) valueOfTry = "6043";
+                else {
+                    valueOfTry = variants[0];
+                }
+
+                if(variants.length <= 1){
+                    $("#submitButton").addClass("btn-primary");
+                    $("#submitButton").removeClass("btn-success");
+                    $("#submitButton").html("Обновить");
+                }
+
+                $(".number").html(valueOfTry);
+                $(".bullsInput").val("");
+                $(".cowsInput").val("");
+            }
+            else{
+                $(".message").html("Ошибка");
+            }
+            $(".bullsInput").focus();
+        }
+        else{
+            $(".bullsInput").focus();
+
+            variants = constantVariants;
+
+            $(".message").html(variants.length.toString() + " " + getNumEnding(variants.length, new Array("вариант", "варианта", "вариантов")));
+
+            valueOfTry = "1234";
+            nOfTrys = 1;
+            $(".number").html(valueOfTry);
+            $(".bullsInput").val("");
+            $(".cowsInput").val("");
+
+            $("#submitButton").removeClass("btn-primary");
+            $("#submitButton").addClass("btn-success");
+            $("#submitButton").html("Отправить");
+        }
+        return false;
+    }
+    
+    function inputValidation(input) {
+        if($(input).val().length > 1){
+            $(input).val($(input).val().substr(0, 1));
+        }
+        if((Number($(input).val()) < 0) || (Number($(input).val()) > 4) || ($(input).val()[0] == null)){
+            $(input).val("");
+        }
+    }
+
+    function getNumEnding(iNumber, aEndings)
+    {
+        var sEnding, i;
+        iNumber = iNumber % 100;
+        if (iNumber>=11 && iNumber<=19) {
+            sEnding=aEndings[2];
+        }
+        else {
+            i = iNumber % 10;
+            switch (i)
+            {
+                case (1): sEnding = aEndings[0]; break;
+                case (2):
+                case (3):
+                case (4): sEnding = aEndings[1]; break;
+                default: sEnding = aEndings[2];
+            }
+        }
+        return sEnding;
+    }
+</script>
+</body>
